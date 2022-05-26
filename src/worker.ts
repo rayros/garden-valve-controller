@@ -58,7 +58,7 @@ const closeValve = async (client: mqtt.AsyncMqttClient) => {
 
 export const worker = () => {
   process.once('message', async (msg) => {
-    const client = await connect();
+    const client = await connect(`garden_valve_controller_worker_${process.pid}`);
 
     await client.subscribe([
       `${sonoffDualR2Topic}Power1`,

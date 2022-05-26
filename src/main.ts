@@ -1,3 +1,4 @@
+import { AsyncMqttClient } from 'async-mqtt';
 import cluster, { Worker } from 'node:cluster';
 import { connect } from './connect';
 
@@ -9,16 +10,20 @@ let chain = Promise.resolve();
 
 let state = 'UNKNOWN';
 
-const runWorker = (client, task: 'open' | 'close') => {
+const runWorker = (client: AsyncMqttClient, task: 'open' | 'close') => {
   worker = cluster.fork();
   worker.send(task);
-  worker.on('message', (message) => {
+  const handler = (message: string) => {
     state = message;
-    client.publish(topic, state);
+    client.publish(topic, message);
+  }
+  worker.once('message', handler)
+  worker.once('exit', () => {
+    worker.off('message', handler);
   })
 }
 
-const valve = (client, task: 'open' | 'close') => {
+const valve = (client: AsyncMqttClient, task: 'open' | 'close') => {
   chain = chain.then(() => {
     return new Promise<void>((resolve) => {
       if (worker) {
@@ -37,7 +42,7 @@ const valve = (client, task: 'open' | 'close') => {
 
 export const main = async () => {
 
-  const client = await connect();
+  const client = await connect('garden_valve_controller');
 
   await client.subscribe(topic);
 
@@ -45,17 +50,13 @@ export const main = async () => {
     const messageString = message.toString();
 
     if (messageString === 'OPEN') {
-      if (state === 'OPEN') {
-        client.publish(topic, state);
-      } else {
+      if (state !== 'OPEN') {
         valve(client, 'open');
       }
     }
 
     if (messageString === 'CLOSE') {
-      if (state === 'CLOSE') {
-        client.publish(topic, state);
-      } else {
+      if (state !== 'CLOSE') {
         valve(client, 'close');
       }
     }
