@@ -10,8 +10,9 @@ let chain = Promise.resolve();
 
 let state = 'UNKNOWN';
 
-const runWorker = (client: AsyncMqttClient, task: 'open' | 'close') => {
+const runWorker = (client: AsyncMqttClient, task: 'OPEN' | 'CLOSE') => {
   worker = cluster.fork();
+  state = 'UNKNOWN';
   worker.send(task);
   const handler = (message: string) => {
     state = message;
@@ -23,7 +24,7 @@ const runWorker = (client: AsyncMqttClient, task: 'open' | 'close') => {
   })
 }
 
-const valve = (client: AsyncMqttClient, task: 'open' | 'close') => {
+const valve = (client: AsyncMqttClient, task: 'OPEN' | 'CLOSE') => {
   chain = chain.then(() => {
     return new Promise<void>((resolve) => {
       if (worker) {
@@ -51,13 +52,13 @@ export const main = async () => {
 
     if (messageString === 'OPEN') {
       if (state !== 'OPEN') {
-        valve(client, 'open');
+        valve(client, 'OPEN');
       }
     }
 
     if (messageString === 'CLOSE') {
       if (state !== 'CLOSE') {
-        valve(client, 'close');
+        valve(client, 'CLOSE');
       }
     }
 
