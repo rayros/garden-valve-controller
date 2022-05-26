@@ -2,7 +2,7 @@ import * as mqtt from 'async-mqtt';
 import { connect } from './connect';
 
 const sonoffDualR2Topic = process.env.SONOFF_DUAL_R2_TOPIC;
-const movmentTime = Number(process.env.MOVMENT_TIME);
+const movementTime = Number(process.env.MOVEMENT_TIME);
 
 const wait = (ms: number) => new Promise<void>(resolve => {
   setTimeout(resolve, ms);
@@ -42,7 +42,7 @@ const openValve = async (client: mqtt.AsyncMqttClient) => {
   console.log('Opening valve...');
   await powerOff(client);
   await setState(client, 'Power1', 'ON');
-  await wait(movmentTime);
+  await wait(movementTime);
   await powerOff(client);
   console.log('Valve opened.');
 };
@@ -51,7 +51,7 @@ const closeValve = async (client: mqtt.AsyncMqttClient) => {
   console.log('Closing valve...');
   await powerOff(client);
   await setState(client, 'Power2', 'ON');
-  await wait(movmentTime);
+  await wait(movementTime);
   await powerOff(client);
   console.log('Valve closed.');
 };
