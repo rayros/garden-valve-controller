@@ -65,12 +65,12 @@ export const worker = () => {
       `${sonoffDualR2Topic}Power2`,
     ]);
 
-    if (msg === 'open') {
+    if (msg === 'OPEN') {
       await openValve(client);
       process.send('OPEN');
     }
 
-    if (msg === 'close') {
+    if (msg === 'CLOSE') {
       await closeValve(client);
       process.send('CLOSE');
     }
