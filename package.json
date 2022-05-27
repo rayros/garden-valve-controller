@@ -10,14 +10,14 @@
    },
    "repository": {
       "type": "git",
-      "url": "git+https://github.com/rayros/garden_controller.git"
+      "url": "git+https://github.com/rayros/garden-valve-controller.git"
    },
    "author": "",
    "license": "ISC",
    "bugs": {
-      "url": "https://github.com/rayros/garden_controller/issues"
+      "url": "https://github.com/rayros/garden-valve-controller/issues"
    },
-   "homepage": "https://github.com/rayros/garden_controller#readme",
+   "homepage": "https://github.com/rayros/garden-valve-controller#readme",
    "dependencies": {
       "async-mqtt": "^2.6.2"
    },
