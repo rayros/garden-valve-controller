@@ -1,5 +1,5 @@
 {
-   "name": "garden_controller",
+   "name": "garden_valve_controller",
    "version": "1.0.0",
    "description": "",
    "main": "index.js",
